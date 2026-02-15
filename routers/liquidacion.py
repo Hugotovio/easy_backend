@@ -11,6 +11,8 @@ router = APIRouter()
 def crear_liquidacion(
     liquidacion: LiquidacionCreate,
     db: Session = Depends(get_db)
+    
 ):
+    print(liquidacion.model_dump())
     return create_liquidacion(db=db, liquidacion=liquidacion)
 
