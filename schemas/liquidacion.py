@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from datetime import datetime
+from datetime import date, time
 
 class LiquidacionBase(BaseModel):
     tanque: str = Field(..., description="Tipo de tanque")
@@ -9,14 +9,21 @@ class LiquidacionBase(BaseModel):
     volumen_neto: float = Field(..., description="Volumen neto")
     api_observado: float
     api_corregido: float
+    factor_correccion: float
     temperatura: float
-    
+    fecha_finalizacion: str
+    hora_finalizacion: str    
+    fecha_liberacion: str
+    hora_liberacion: str
+   
+
 
 class LiquidacionCreate(LiquidacionBase):
     pass
 
 class LiquidacionResponse(LiquidacionBase):
     id: int
+    
 
     class Config:
-        from_attributes = True
+        from_attributes = True  # Pydantic v2
