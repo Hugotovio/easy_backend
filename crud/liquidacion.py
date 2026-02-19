@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from models.liquidacion import Liquidacion
-
+from sqlalchemy import func
 
 def create_liquidacion(db: Session, liquidacion):
     nueva_liquidacion = Liquidacion(
@@ -24,3 +24,4 @@ def create_liquidacion(db: Session, liquidacion):
     db.refresh(nueva_liquidacion)
 
     return nueva_liquidacion
+

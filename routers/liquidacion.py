@@ -1,18 +1,23 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from railway_db import get_db
+from railway_db import SessionLocal
+from schemas.liquidacion import LiquidacionRequest
+from service.liquidaciones_service import liquidar
 
-from schemas.liquidacion import LiquidacionCreate, LiquidacionResponse
-from crud.liquidacion import create_liquidacion
+router = APIRouter(prefix="/liquidacion", tags=["Liquidacion"])
 
-router = APIRouter()
 
-@router.post("/liquidacion/", response_model=LiquidacionResponse)
-def crear_liquidacion(
-    liquidacion: LiquidacionCreate,
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+@router.post("/")
+def procesar_liquidacion(
+    datos: LiquidacionRequest,
     db: Session = Depends(get_db)
-    
 ):
-    print(liquidacion.model_dump())
-    return create_liquidacion(db=db, liquidacion=liquidacion)
-
+    return liquidar(db, datos)
