@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float, DateTime
-from database import Base
+from railway_db import Base
 
 class CierreTurno(Base):
     __tablename__ = "cierre_turno"

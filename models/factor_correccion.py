@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, Float, UniqueConstraint
-from database import Base
+from railway_db import Base
 
 class FactorCorreccion(Base):
     __tablename__ = "factor_correccion"

@@ -1,7 +1,7 @@
 # models/api_correccion.py
 
 from sqlalchemy import Column, Integer, Float, UniqueConstraint
-from database import Base
+from railway_db import Base
 
 class ApiCorreccion(Base):
     __tablename__ = "api_correcciones"

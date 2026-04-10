@@ -4,6 +4,11 @@ from models.factor_correccion import FactorCorreccion
 from models.api_correccion import ApiCorreccion
 from datetime import datetime, timedelta
 import pytz
+from sqlalchemy import and_
+
+# 🔥 Redondeo a múltiplos de 0.5
+def redondear_05(valor):
+    return round(valor * 2) / 2
 
 
 def liquidar(db: Session, datos):
@@ -14,19 +19,22 @@ def liquidar(db: Session, datos):
     altura_final = datos.altura_inicial + datos.volumen_contador
 
     # =========================
-    # 2️⃣ REDONDEOS PARA CONSULTA (2 DECIMALES)
+    # 2️⃣ REDONDEOS CORRECTOS
     # =========================
-    temp_tabla = round(datos.temperatura, 2)
-    print(f"Temperatura redondeada para consulta: {temp_tabla}")
-    api_obs_tabla = round(datos.api_observado, 2)
-    print(f"API observado redondeado para consulta: {api_obs_tabla}")
+    temp_tabla = redondear_05(datos.temperatura)
+    api_obs_tabla = redondear_05(datos.api_observado)
+
+    print(f"T ajustada: {temp_tabla}")
+    print(f"API observado ajustado: {api_obs_tabla}")
 
     # =========================
     # 3️⃣ BUSCAR API CORREGIDO
     # =========================
     registro_api = db.query(ApiCorreccion).filter(
-        ApiCorreccion.temperatura == temp_tabla,
-        ApiCorreccion.api_observado == api_obs_tabla
+        and_(
+            ApiCorreccion.temperatura == temp_tabla,
+            ApiCorreccion.api_observado == api_obs_tabla
+        )
     ).first()
 
     if not registro_api:
@@ -34,14 +42,18 @@ def liquidar(db: Session, datos):
             f"No se encontró API corregido para T={temp_tabla} y API={api_obs_tabla}"
         )
 
-    api_corregido_tabla = round(registro_api.api_corregido, 2)
+    api_corregido_tabla = redondear_05(registro_api.api_corregido)
+
+    print(f"API corregido ajustado: {api_corregido_tabla}")
 
     # =========================
     # 4️⃣ BUSCAR FACTOR
     # =========================
     factor = db.query(FactorCorreccion).filter(
-        FactorCorreccion.temperatura == temp_tabla,
-        FactorCorreccion.api_corregido == api_corregido_tabla
+        and_(
+            FactorCorreccion.temperatura == temp_tabla,
+            FactorCorreccion.api_corregido == api_corregido_tabla
+        )
     ).first()
 
     if not factor:
@@ -58,7 +70,7 @@ def liquidar(db: Session, datos):
     volumen_neto = round(volumen_bruto * factor_valor, 2)
 
     # =========================
-    # 6️⃣ FORMATO VISUAL PARA VIAJES
+    # 6️⃣ FORMATO VISUAL
     # =========================
     api_observado_visual = round(datos.api_observado, 1)
     api_corregido_visual = round(api_corregido_tabla, 1)

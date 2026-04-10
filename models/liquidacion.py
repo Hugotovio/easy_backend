@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Date, Integer, Float, String, Time
-from database import Base
+from railway_db import Base
 
 class Liquidacion(Base):
     __tablename__ = "viajes"
