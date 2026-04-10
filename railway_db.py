@@ -1,22 +1,13 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
-from dotenv import load_dotenv
-import os
 
-load_dotenv()
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-ENV = os.getenv("ENV", "DEV")
-
-if ENV == "PROD":
-    DATABASE_URL = os.getenv("DATABASE_URL_PROD")
-else:
-    DATABASE_URL = os.getenv("DATABASE_URL_DEV")
-
-# 🔴 Validación
 if not DATABASE_URL:
-    raise ValueError("❌ No se encontró la URL de la base de datos")
+    raise ValueError("❌ DATABASE_URL no está configurada en Railway")
 
-print(f"✅ Conectando a base de datos en modo: {ENV}")
+print("✅ Conectado a Railway DB")
 
 engine = create_engine(
     DATABASE_URL,
