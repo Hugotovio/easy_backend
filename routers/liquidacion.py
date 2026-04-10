@@ -15,7 +15,7 @@ def get_db():
         db.close()
 
 
-@router.post("/")
+@router.post("")
 def procesar_liquidacion(
     datos: LiquidacionRequest,
     db: Session = Depends(get_db)
