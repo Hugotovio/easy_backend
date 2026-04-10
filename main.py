@@ -1,8 +1,17 @@
 from fastapi import FastAPI
-from routers import liquidacion
 from fastapi.middleware.cors import CORSMiddleware
- 
+from starlette.middleware.proxy_headers import ProxyHeadersMiddleware
+from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
+
 app = FastAPI()
+
+# 👇 CLAVE
+app.add_middleware(ProxyHeadersMiddleware)
+
+# 👇 opcional pero recomendado
+app.add_middleware(HTTPSRedirectMiddleware)
+
+# 👇 tu CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -10,4 +19,3 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.include_router(liquidacion.router, prefix="/api/v1")
